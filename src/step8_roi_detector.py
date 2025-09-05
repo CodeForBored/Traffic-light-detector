@@ -24,8 +24,8 @@ KERNEL = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
 # define ROI as top-middle rectangle
 def get_roi(frame):
     h, w, _ = frame.shape
-    x1, y1 = w//3, 0         # left, top
-    x2, y2 = 2*w//3, h//2    # right, halfway down
+    x1, y1 = w//3, 0         
+    x2, y2 = 2*w//3, h//2    
     return (x1, y1, x2, y2)
 
 while True:
@@ -34,7 +34,7 @@ while True:
         break
 
     x1, y1, x2, y2 = get_roi(frame)
-    roi = frame[y1:y2, x1:x2]  # crop to ROI
+    roi = frame[y1:y2, x1:x2]  
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
     red_mask1 = cv2.inRange(hsv, RANGES["red1"][0], RANGES["red1"][1])
@@ -57,7 +57,7 @@ while True:
                 cv2.putText(roi, label, (x, y - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, DRAW_COLOR[label], 2)
 
-    # draw ROI box on main frame
+ 
     cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 255), 2)
     frame[y1:y2, x1:x2] = roi  # overlay roi back
 

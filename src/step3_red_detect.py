@@ -12,7 +12,7 @@ while True:
     if not ret:
         break
 
-    # Convert to HSV
+   
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Red has two ranges
@@ -25,7 +25,7 @@ while True:
     mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
     mask_red = cv2.bitwise_or(mask1, mask2)
 
-    # Find contours of red regions
+    
     contours, _ = cv2.findContours(mask_red, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)

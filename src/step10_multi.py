@@ -13,7 +13,7 @@ color_ranges = {
     "Green": [(np.array([40, 100, 100]), np.array([85, 255, 255]))]
 }
 
-# Drawing colors for boxes
+
 draw_colors = {
     "Red": (0, 0, 255),
     "Yellow": (0, 255, 255),
@@ -37,7 +37,7 @@ while True:
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if area < 300:  # ignore tiny blobs
+            if area < 300:  
                 continue
 
             # circularity filter
@@ -45,7 +45,7 @@ while True:
             if perimeter == 0:
                 continue
             circularity = 4 * np.pi * (area / (perimeter * perimeter))
-            if circularity < 0.3:  # skip weird shapes
+            if circularity < 0.3: 
                 continue
 
             # draw box + label

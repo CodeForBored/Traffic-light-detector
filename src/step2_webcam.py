@@ -13,11 +13,11 @@ while True:
     if not ret:
         break
 
-    # Convert BGR (OpenCV default) to HSV
+    # Convert BGR to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define color ranges in HSV
-    # (you can fine-tune these later)
+  
     lower_red = np.array([0, 120, 70])
     upper_red = np.array([10, 255, 255])
     mask_red = cv2.inRange(hsv, lower_red, upper_red)
@@ -35,7 +35,7 @@ while True:
     yellow_detected = cv2.bitwise_and(frame, frame, mask=mask_yellow)
     green_detected = cv2.bitwise_and(frame, frame, mask=mask_green)
 
-    # Show results
+   
     cv2.imshow("Webcam", frame)
     cv2.imshow("Red Detection", red_detected)
     cv2.imshow("Yellow Detection", yellow_detected)

@@ -5,7 +5,7 @@ cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("ERROR: camera not found"); exit()
 
-# Default HSV ranges (good starting points; tune with the 's' key or step4_tuner)
+# Default HSV ranges 
 RANGES = {
     "red1": (np.array([0, 120, 70]),   np.array([10, 255, 255])),
     "red2": (np.array([170, 120, 70]), np.array([180, 255, 255])),
@@ -13,14 +13,14 @@ RANGES = {
     "green": (np.array([40, 70, 70]),   np.array([85, 255, 255]))
 }
 
-# BGR colors for drawing (so boxes match detected color)
+# BGR colors for drawing 
 DRAW_COLOR = {
     "RED": (0, 0, 255),
     "YELLOW": (0, 255, 255),
     "GREEN": (0, 255, 0)
 }
 
-AREA_THRESH = 500            # ignore contours smaller than this
+AREA_THRESH = 500           
 KERNEL = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
 SHOW_MASKS = False
 
@@ -33,7 +33,7 @@ while True:
     frame = cv2.resize(frame, (800, 600))
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # build masks -- red needs two ranges combined
+    # build masks
     red_mask1 = cv2.inRange(hsv, RANGES["red1"][0], RANGES["red1"][1])
     red_mask2 = cv2.inRange(hsv, RANGES["red2"][0], RANGES["red2"][1])
     red_mask = cv2.bitwise_or(red_mask1, red_mask2)
@@ -61,7 +61,7 @@ while True:
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
             cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
 
-    # show video and optionally masks
+    
     cv2.imshow("Detector", frame)
     if SHOW_MASKS:
         cv2.imshow("Mask - RED", red_mask)
@@ -69,11 +69,11 @@ while True:
         cv2.imshow("Mask - GREEN", green_mask)
 
     key = cv2.waitKey(1) & 0xFF
-    if key == 27:  # ESC
+    if key == 27: 
         break
     elif key == ord('m'):
         SHOW_MASKS = not SHOW_MASKS
-    elif key == ord('s'):  # print center HSV (useful for tuning)
+    elif key == ord('s'):  # for tuning
         cx, cy = frame.shape[1] // 2, frame.shape[0] // 2
         print("Center HSV:", hsv[cy, cx])
     elif key == ord(']'):

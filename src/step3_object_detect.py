@@ -14,7 +14,7 @@ while True:
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # --- Color ranges ---
+   
     # Red (two ranges)
     lower_red1 = np.array([0, 120, 70])
     upper_red1 = np.array([10, 255, 255])
@@ -39,7 +39,7 @@ while True:
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if area > 500:  # filter small noise
+            if area > 500:  
                 x, y, w, h = cv2.boundingRect(cnt)
                 cv2.rectangle(frame, (x, y), (x+w, y+h), color_bgr, 2)
                 cv2.putText(frame, color_name, (x, y-10),

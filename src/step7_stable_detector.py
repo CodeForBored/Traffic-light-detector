@@ -22,7 +22,7 @@ DRAW_COLOR = {
 AREA_THRESH = 500
 KERNEL = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
 
-# how many consecutive frames before confirming a detection
+
 STABILITY_FRAMES = 5
 detection_counters = defaultdict(int)
 
@@ -32,7 +32,7 @@ while True:
         break
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # build masks
+   
     red_mask1 = cv2.inRange(hsv, RANGES["red1"][0], RANGES["red1"][1])
     red_mask2 = cv2.inRange(hsv, RANGES["red2"][0], RANGES["red2"][1])
     red_mask = cv2.bitwise_or(red_mask1, red_mask2)
@@ -64,7 +64,7 @@ while True:
     cv2.imshow("Stable Detector", frame)
 
     key = cv2.waitKey(1) & 0xFF
-    if key == 27:  # ESC
+    if key == 27:  
         break
 
 cap.release()

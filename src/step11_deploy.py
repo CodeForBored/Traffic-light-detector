@@ -2,12 +2,11 @@ import cv2
 import numpy as np
 import gradio as gr
 
-# function to detect traffic light in uploaded video
+
 def detect_traffic_lights(video_path):
     cap = cv2.VideoCapture(video_path)
     output_frames = []
 
-    # HSV ranges for traffic light colors
     color_ranges = {
         "Red": [(0, 120, 70), (10, 255, 255)],
         "Yellow": [(15, 150, 150), (35, 255, 255)],
@@ -24,7 +23,7 @@ def detect_traffic_lights(video_path):
         detected_color = None
         for color, (lower, upper) in color_ranges.items():
             mask = cv2.inRange(hsv, np.array(lower), np.array(upper))
-            if cv2.countNonZero(mask) > 500:  # threshold
+            if cv2.countNonZero(mask) > 500: 
                 detected_color = color
                 break
 
@@ -32,7 +31,7 @@ def detect_traffic_lights(video_path):
             cv2.putText(frame, f"{detected_color} Light", (50, 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        # convert BGR → RGB (for Gradio)
+        # convert BGR - RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         output_frames.append(frame_rgb)
 

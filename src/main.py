@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 
-# HSV ranges (widened for real traffic lights)
+# HSV ranges 
 COLOR_RANGES = {
     "red": [
         (np.array([0, 100, 100]), np.array([10, 255, 255])),
@@ -12,8 +12,8 @@ COLOR_RANGES = {
     "green": [(np.array([40, 50, 50]), np.array([95, 255, 255]))]
 }
 
-PIXEL_THRESHOLD = 300   # min pixel count to consider "detected"
-MIN_CONTOUR_AREA = 150  # min contour area
+PIXEL_THRESHOLD = 300   
+MIN_CONTOUR_AREA = 150  
 
 
 def detect_state(frame):
@@ -29,7 +29,7 @@ def detect_state(frame):
         if mask_total is None:
             continue
 
-        # clean mask
+       
         kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
         mask_total = cv2.morphologyEx(mask_total, cv2.MORPH_OPEN, kern)
         mask_total = cv2.morphologyEx(mask_total, cv2.MORPH_CLOSE, kern)
@@ -37,7 +37,7 @@ def detect_state(frame):
         # count pixels for this color
         counts[cname] = cv2.countNonZero(mask_total)
 
-        # draw contours (for visualization)
+        
         contours, _ = cv2.findContours(mask_total, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             if cv2.contourArea(cnt) < MIN_CONTOUR_AREA:
@@ -51,7 +51,7 @@ def detect_state(frame):
             cv2.rectangle(frame, (x, y), (x + wc, y + hc), color, 2)
             cv2.putText(frame, cname.upper(), (x, y - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
-    # decide state: pick the color with max pixels
+    # decide state
     detected = max(counts, key=counts.get)
     if counts[detected] < PIXEL_THRESHOLD:
         detected = None
@@ -72,7 +72,7 @@ def main():
 
         h, w, _ = frame.shape
 
-        # ROI: centered horizontally, near top
+        # ROI
         roi_w, roi_h = 350, 350
         roi_x = (w - roi_w) // 2
         roi_y = int(h * 0.15)
@@ -85,7 +85,7 @@ def main():
         detected, roi_frame = detect_state(roi)
         frame[roi_y:roi_y + roi_h, roi_x:roi_x + roi_w] = roi_frame
 
-        # Map detection → label
+        # Map detection 
         label, color = "NONE", (255, 255, 255)
         if detected == "red":
             label, color = "STOP", (0, 0, 255)
@@ -99,7 +99,7 @@ def main():
 
         cv2.imshow("Traffic Light Detector (ROI)", frame)
 
-        # ESC to quit
+        
         if cv2.waitKey(1) == 27:
             break
 

@@ -1,4 +1,3 @@
-# app.py (robust, headless-friendly)
 import cv2
 import numpy as np
 import gradio as gr
@@ -7,7 +6,7 @@ import os
 import shutil
 import traceback
 
-# ---------------- CONFIG ----------------
+#  CONFIG   
 COLOR_RANGES = {
     "red": [
         (np.array([0, 100, 100]), np.array([10, 255, 255])),
@@ -18,7 +17,7 @@ COLOR_RANGES = {
 }
 PIXEL_THRESHOLD = 300
 MIN_CONTOUR_AREA = 150
-# ----------------------------------------
+
 
 def _normalize_input_to_path(input_video):
     """
@@ -31,22 +30,22 @@ def _normalize_input_to_path(input_video):
     if input_video is None:
         return None
 
-    # 1) string path (existing)
+    #  string path 
     if isinstance(input_video, str) and os.path.exists(input_video):
         return input_video
 
-    # 2) dict (common in some gradio versions)
+    #  dict 
     if isinstance(input_video, dict):
         for k in ("name", "tmp_path", "filepath", "file"):
             v = input_video.get(k)
             if isinstance(v, str) and os.path.exists(v):
                 return v
-        # file object under 'file'
+        
         fobj = input_video.get("file")
         if hasattr(fobj, "name") and os.path.exists(fobj.name):
             return fobj.name
 
-    # 3) file-like object with .name or .read()
+    
     if hasattr(input_video, "name") and isinstance(input_video.name, str) and os.path.exists(input_video.name):
         return input_video.name
 
@@ -55,7 +54,7 @@ def _normalize_input_to_path(input_video):
             fd, tmp_path = tempfile.mkstemp(suffix=".mp4")
             os.close(fd)
             with open(tmp_path, "wb") as out_f:
-                # read in chunks
+                
                 while True:
                     chunk = input_video.read(8192)
                     if not chunk:
@@ -68,10 +67,7 @@ def _normalize_input_to_path(input_video):
     return None
 
 def _annotate_frame(frame):
-    """
-    Run per-frame detection on a BGR frame and draw bounding boxes.
-    Returns (label_string_or_none, annotated_frame)
-    """
+    
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     counts = {"red": 0, "yellow": 0, "green": 0}
 
@@ -101,7 +97,7 @@ def _annotate_frame(frame):
             cv2.rectangle(frame, (x,y), (x+wc, y+hc), color, 2)
             cv2.putText(frame, cname.upper(), (x, y-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
-    # pick dominant color by pixel count (if above threshold)
+    
     detected = max(counts, key=counts.get)
     if counts[detected] < PIXEL_THRESHOLD:
         detected = None
@@ -130,7 +126,7 @@ def process_video(input_video):
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
         print(f"DEBUG: input w,h,fps,frames = {w},{h},{fps},{total_frames}")
 
-        # create temp output .avi (XVID)
+        
         fd, out_path = tempfile.mkstemp(suffix=".avi")
         os.close(fd)
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
@@ -144,9 +140,9 @@ def process_video(input_video):
             ret, frame = cap.read()
             if not ret:
                 break
-            # process frame (we run detection on entire frame; optional: crop ROI here)
+            
             detected, annotated = _annotate_frame(frame)
-            # draw state label at top-left
+            
             if detected == "red":
                 label, color = "STOP", (0,0,255)
             elif detected == "yellow":
@@ -165,8 +161,7 @@ def process_video(input_video):
         cap.release()
         writer.release()
 
-        # if we saved a temp input copy earlier, remember to clean it up at the end
-        # (we'll delete below)
+       
         if video_path != input_video and hasattr(input_video, "read"):
             tmp_input_path = video_path
 
@@ -178,14 +173,14 @@ def process_video(input_video):
         raise RuntimeError("Processing error: " + str(e))
 
     finally:
-        # remove temp input file if we created one
+        
         try:
             if tmp_input_path and os.path.exists(tmp_input_path):
                 os.remove(tmp_input_path)
         except Exception:
             pass
 
-# ---------------- Gradio UI ----------------
+#  Gradio UI 
 title = "Traffic Light Detector — Upload video"
 desc = "Upload a short traffic-light video (mp4). The app will return an annotated video showing detected state (STOP / SLOW / GO)."
 
@@ -199,5 +194,5 @@ demo = gr.Interface(
 )
 
 if __name__ == "__main__":
-    # set share=True if you want a temporary public URL (optional)
     demo.launch(share=True)
+
